@@ -88,3 +88,43 @@ function displayPotdImg(data) {
   // explanation
   explanation.textContent = `${data.explanation}`;
 }
+
+function displayPotdVid(data) {
+  const iframe = document.getElementById("apotd-video");
+  const apotdImg = document.getElementById("apotd-img");
+  const imageDate = document.getElementById("apotd-date");
+  const apotdTitle = document.getElementById("apotd-title");
+  const explanation = document.getElementById("explanation-para");
+  const copyright = document.querySelector(".copyright");
+
+  iframe.src = `${data.url}`;
+  iframe.style.display = "block"; // show video
+  apotdImg.style.display = "none"; // hide image
+
+  const dateParts = data.date.split("-");
+  const year = dateParts[0];
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const month = months[dateParts[1] - 1];
+  const day = dateParts[2];
+
+  imageDate.textContent = `${month} ${day}, ${year}`;
+  apotdTitle.textContent = `${data.title}`;
+  explanation.textContent = `${data.explanation}`;
+
+  copyright.style.display = "none"; // hide copyright
+}
