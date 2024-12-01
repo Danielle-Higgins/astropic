@@ -1,130 +1,155 @@
-const API_KEY = config.API_KEY;
-const BASEURL = "https://api.nasa.gov";
+class AstroPic {
+  // private properties
+  #dateInput;
+  #pictureBtn;
 
-const dateInput = document.getElementById("date-input");
-const pictureBtn = document.getElementById("potd-btn");
+  // private variables
+  #API_KEY = config.API_KEY;
+  #BASEURL = "https://api.nasa.gov";
 
-pictureBtn.addEventListener("click", () => {
-  const dateVal = dateInput.value;
+  constructor(input, button) {
+    this.#dateInput = document.getElementById(input);
+    this.#pictureBtn = document.getElementById(button);
+  }
 
-  // check if date value is empty
-  if (dateVal) searchPotd(dateVal);
-  else return;
-  //   console.log(dateVal);
-});
+  // runs the program
+  pictureOfTheDay() {
+    this.#pictureBtn.addEventListener("click", () => {
+      const dateVal = this.#dateInput.value;
 
-// searches for the picture of the day (may be an img or video)
-function searchPotd(date) {
-  const startDate = new Date("1995-06-16").toISOString().split("T");
-  const todaysDate = new Date().toISOString().split("T");
-
-  // check if the date is valid
-  if (!(date >= startDate && date <= todaysDate)) return;
-
-  const url = `${BASEURL}/planetary/apod?api_key=${API_KEY}&date=${date}`;
-
-  fetch(url)
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-
-      // check if the media type is an image or video
-      if (data.media_type === "image") displayPotdImg(data);
-      else if (data.media_type === "video") displayPotdVid(data);
+      // check if date value is empty
+      if (dateVal) this.#searchPotd(dateVal);
       else return;
-    })
-    .catch((error) => console.log(`${error}`));
+
+      // console.log(dateVal);
+    });
+  }
+
+  // searches for the picture of the day (may be an img or video)
+  #searchPotd(date) {
+    const startDate = new Date("1995-06-16").toISOString().split("T");
+    const todaysDate = new Date().toISOString().split("T");
+
+    // check if the date is valid
+    if (!(date >= startDate && date <= todaysDate)) return;
+
+    const url = `${this.#BASEURL}/planetary/apod?api_key=${
+      this.#API_KEY
+    }&date=${date}`;
+
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+
+        // check if the media type is an image or video
+        if (data.media_type === "image") this.#displayPotdImg(data);
+        else if (data.media_type === "video") this.#displayPotdVid(data);
+        else return;
+      })
+      .catch((error) => console.log(`${error}`));
+  }
+
+  // displays the image for picture of the day
+  #displayPotdImg(imgData) {
+    const imgLink = document.getElementById("potd-img-link");
+    const apotdImg = document.getElementById("apotd-img");
+    const iframe = document.getElementById("apotd-video");
+
+    // picture of the day
+    apotdImg.alt = "picture of the day";
+    apotdImg.src = `${imgData.hdurl}`;
+    apotdImg.style.display = "block"; // show image
+    iframe.style.display = "none"; // hide video
+
+    imgLink.href = apotdImg.src;
+
+    // picture of the day title
+    this.#getTitle(imgData);
+
+    // image date
+    this.#getPotdDate(imgData);
+
+    // image credit & copyright
+    this.#getImgCreditAndCopyright(imgData);
+
+    // explanation
+    this.#getExplanation(imgData);
+  }
+
+  #displayPotdVid(videoData) {
+    const iframe = document.getElementById("apotd-video");
+    const apotdImg = document.getElementById("apotd-img");
+
+    iframe.src = `${videoData.url}`;
+    iframe.style.display = "block"; // show video
+    apotdImg.style.display = "none"; // hide image
+
+    // picture of the day title
+    this.#getTitle(videoData);
+
+    // image date
+    this.#getPotdDate(videoData);
+
+    // image credit & copyright
+    this.#getImgCreditAndCopyright(videoData);
+
+    // explanation
+    this.#getExplanation(videoData);
+  }
+
+  // get picture of the day title
+  #getTitle(data) {
+    const apotdTitle = document.getElementById("apotd-title");
+    apotdTitle.textContent = `${data.title}`;
+  }
+
+  // get the date for the picture of the day
+  #getPotdDate(data) {
+    const imageDate = document.getElementById("apotd-date");
+
+    const dateParts = data.date.split("-");
+    const year = dateParts[0];
+
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    const month = months[dateParts[1] - 1];
+    const day = dateParts[2];
+
+    imageDate.textContent = `${month} ${day}, ${year}`;
+  }
+
+  // get the image credit and copyright info
+  #getImgCreditAndCopyright(data) {
+    const copyright = document.querySelector(".copyright");
+
+    // check if the copyright property exists
+    if ("copyright" in data) {
+      copyright.innerHTML = `Image Credit & Copyright: <span id="id="img-credit-copyright"">${data.copyright}</span>`;
+    } else {
+      copyright.innerHTML = "";
+    }
+  }
+
+  // get the explanation
+  #getExplanation(data) {
+    const explanation = document.getElementById("explanation-para");
+    explanation.textContent = `${data.explanation}`;
+  }
 }
 
-// displays the image for picture of the day
-function displayPotdImg(data) {
-  const imageDate = document.getElementById("apotd-date");
-  const imgLink = document.getElementById("potd-img-link");
-  const apotdImg = document.getElementById("apotd-img");
-  const iframe = document.getElementById("apotd-video");
-  const apotdTitle = document.getElementById("apotd-title");
-  const copyright = document.querySelector(".copyright");
-  const explanation = document.getElementById("explanation-para");
-
-  // image date
-  const dateParts = data.date.split("-");
-  const year = dateParts[0];
-
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  const month = months[dateParts[1] - 1];
-  const day = dateParts[2];
-
-  imageDate.textContent = `${month} ${day}, ${year}`;
-
-  // picture of the day
-  apotdImg.alt = "picture of the day";
-  apotdImg.src = `${data.hdurl}`;
-  apotdImg.style.display = "block"; // show image
-  iframe.style.display = "none"; // hide video
-
-  imgLink.href = apotdImg.src;
-
-  // picture of the day title
-  apotdTitle.textContent = `${data.title}`;
-
-  // image credit & copyright
-  copyright.innerHTML = `Image Credit & Copyright: <span id="id="img-credit-copyright"">${data.copyright}</span>`;
-  copyright.style.display = "block"; // show copyright info
-
-  // explanation
-  explanation.textContent = `${data.explanation}`;
-}
-
-function displayPotdVid(data) {
-  const iframe = document.getElementById("apotd-video");
-  const apotdImg = document.getElementById("apotd-img");
-  const imageDate = document.getElementById("apotd-date");
-  const apotdTitle = document.getElementById("apotd-title");
-  const explanation = document.getElementById("explanation-para");
-  const copyright = document.querySelector(".copyright");
-
-  iframe.src = `${data.url}`;
-  iframe.style.display = "block"; // show video
-  apotdImg.style.display = "none"; // hide image
-
-  const dateParts = data.date.split("-");
-  const year = dateParts[0];
-
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  const month = months[dateParts[1] - 1];
-  const day = dateParts[2];
-
-  imageDate.textContent = `${month} ${day}, ${year}`;
-  apotdTitle.textContent = `${data.title}`;
-  explanation.textContent = `${data.explanation}`;
-
-  copyright.style.display = "none"; // hide copyright
-}
+const picOfDay = new AstroPic("date-input", "potd-btn");
+picOfDay.pictureOfTheDay();
