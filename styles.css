@@ -8,6 +8,7 @@
 
 html {
   font-size: 62.5%;
+  scroll-behavior: smooth;
 }
 
 /* Base Styles */
@@ -189,4 +190,59 @@ img {
   font-weight: 500;
   border-radius: 25px;
   cursor: pointer;
+}
+
+/* Media Queries */
+@media screen and (max-width: 930px) {
+  /* Picture of the Day Styles */
+  .potd-container {
+    grid-template-columns: 1fr;
+  }
+
+  .potd-container .potd-img,
+  .potd-container iframe {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .text-container,
+  .potd-container .explanation,
+  .date-container {
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .potd-section .potd-title {
+    font-size: 3rem;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .potd-section .potd-title {
+    font-size: 2.5rem;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .potd-section .potd-title {
+    font-size: 2rem;
+  }
+
+  .date-container input {
+    width: 100%;
+  }
+
+  .date-container button {
+    width: 100%;
+    margin: 20px 0 0;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .header .nasa-apod-btn a {
+    padding: 8px 10px;
+    font-size: 1.6rem;
+  }
 }
