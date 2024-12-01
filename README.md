@@ -5,7 +5,7 @@
   <img width="400" src="https://github.com/Danielle-Higgins/astropic/blob/main/img/astropic-preview2.png">
 </p>
 
-Are you a fan of Astronomy? AstroPic allows you to select a date and depending on which date you choose, it will show you the picture from that day. You'll know the title and will recieve a breif explanation on what the image is!
+Are you a fan of Astronomy? AstroPic allows you to select a date and depending on which date you choose, it will show you the picture from that day. You'll know the title and will receive a brief explanation on what the image is!
 
 ## Tech Used
 
