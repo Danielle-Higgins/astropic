@@ -26,7 +26,7 @@ class AstroPic {
   }
 
   // searches for the picture of the day (may be an img or video)
-  #searchPotd(date) {
+  async #searchPotd(date) {
     const startDate = new Date("1995-06-16").toISOString().split("T");
     const todaysDate = new Date().toISOString().split("T");
 
@@ -37,17 +37,23 @@ class AstroPic {
       this.#API_KEY
     }&date=${date}`;
 
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
+    try {
+      const response = await fetch(url);
 
-        // check if the media type is an image or video
-        if (data.media_type === "image") this.#displayPotdImg(data);
-        else if (data.media_type === "video") this.#displayPotdVid(data);
-        else return;
-      })
-      .catch((error) => console.log(`${error}`));
+      if (!response.ok) {
+        throw new Error("Network response was not ok!");
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      // check if the media type is an image or video
+      if (data.media_type === "image") this.#displayPotdImg(data);
+      else if (data.media_type === "video") this.#displayPotdVid(data);
+      else return;
+    } catch (error) {
+      console.log("Error:", error);
+    }
   }
 
   // displays the image for picture of the day
